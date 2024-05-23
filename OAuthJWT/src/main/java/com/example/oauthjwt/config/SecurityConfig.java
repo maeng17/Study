@@ -1,5 +1,7 @@
 package com.example.oauthjwt.config;
 
+import com.example.oauthjwt.jwt.JWTUtil;
+import com.example.oauthjwt.oauth2.CustomSuccessHandler;
 import com.example.oauthjwt.service.CustomOAuth2UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,8 +17,14 @@ public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
 
-    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService) {
+    private final CustomSuccessHandler customSuccessHandler;
+    private final JWTUtil jwtUtil;
+
+    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, CustomSuccessHandler customSuccessHandler, JWTUtil jwtUtil) {
         this.customOAuth2UserService = customOAuth2UserService;
+        this.customSuccessHandler = customSuccessHandler;
+        this.jwtUtil = jwtUtil;
+
     }
 
     @Bean
@@ -37,7 +45,9 @@ public class SecurityConfig {
         http
                 .oauth2Login((oauth2) -> oauth2
                         .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig //OAuth2 의존성 주입
-                                .userService(customOAuth2UserService)));
+                                .userService(customOAuth2UserService))
+                        //CustomSuccessHandler 클래스 등록 : 로그인 성공시 쿠키에 JWT 담김
+                        .successHandler(customSuccessHandler));
 
         //경로별 접근 인가 설정
         http
