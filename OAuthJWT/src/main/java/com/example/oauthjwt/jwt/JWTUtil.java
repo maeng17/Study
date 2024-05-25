@@ -40,13 +40,13 @@ public class JWTUtil {
     }
 
     //token 생성
-    public String createJwt(String username, String role, Long expiredMS) {
+    public String createJwt(String username, String role, Long expiredMs) {
 
         return Jwts.builder()
                 .claim("username", username)
                 .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + expiredMS))
+                .expiration(new Date(System.currentTimeMillis() + expiredMs))
                 .signWith(secretKey)
                 .compact();
     }
