@@ -1,4 +1,4 @@
-package com.example.springjwt.dto;
+package com.example.springjwtDeep.dto;
 
 import lombok.Getter;
 import lombok.Setter;

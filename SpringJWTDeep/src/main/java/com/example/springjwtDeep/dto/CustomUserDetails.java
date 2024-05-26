@@ -1,12 +1,11 @@
-package com.example.springjwt.dto;
+package com.example.springjwtDeep.dto;
 
-import com.example.springjwt.entity.UserEntity;
+import com.example.springjwtDeep.entity.UserEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public class CustomUserDetails implements UserDetails {
     private final UserEntity userEntity;

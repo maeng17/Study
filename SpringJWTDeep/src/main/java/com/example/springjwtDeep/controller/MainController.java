@@ -1,4 +1,4 @@
-package com.example.springjwt.controller;
+package com.example.springjwtDeep.controller;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;

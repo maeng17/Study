@@ -1,4 +1,4 @@
-package com.example.springjwt.entity;
+package com.example.springjwtDeep.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

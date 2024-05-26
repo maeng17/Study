@@ -1,8 +1,8 @@
-package com.example.springjwt.service;
+package com.example.springjwtDeep.service;
 
-import com.example.springjwt.dto.JoinDTO;
-import com.example.springjwt.entity.UserEntity;
-import com.example.springjwt.repository.UserRepository;
+import com.example.springjwtDeep.dto.JoinDTO;
+import com.example.springjwtDeep.entity.UserEntity;
+import com.example.springjwtDeep.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 

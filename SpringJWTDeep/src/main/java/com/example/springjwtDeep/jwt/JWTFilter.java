@@ -1,7 +1,7 @@
-package com.example.springjwt.jwt;
+package com.example.springjwtDeep.jwt;
 
-import com.example.springjwt.dto.CustomUserDetails;
-import com.example.springjwt.entity.UserEntity;
+import com.example.springjwtDeep.dto.CustomUserDetails;
+import com.example.springjwtDeep.entity.UserEntity;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

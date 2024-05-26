@@ -1,8 +1,8 @@
-package com.example.springjwt.config;
+package com.example.springjwtDeep.config;
 
-import com.example.springjwt.jwt.JWTFilter;
-import com.example.springjwt.jwt.JWTUtil;
-import com.example.springjwt.jwt.LoginFilter;
+import com.example.springjwtDeep.jwt.JWTFilter;
+import com.example.springjwtDeep.jwt.JWTUtil;
+import com.example.springjwtDeep.jwt.LoginFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

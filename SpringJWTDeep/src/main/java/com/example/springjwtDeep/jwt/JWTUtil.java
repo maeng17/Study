@@ -1,4 +1,4 @@
-package com.example.springjwt.jwt;
+package com.example.springjwtDeep.jwt;
 
 
 import io.jsonwebtoken.Jwts;
@@ -32,6 +32,11 @@ public class JWTUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
     }
 
+    //category
+    public String getCategory(String token){
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category", String.class);
+    }
+
 
     //토큰 소멸 확인
     public Boolean isExpired(String token) {
@@ -40,8 +45,9 @@ public class JWTUtil {
     }
 
     //로그인이 성공했을 때 토큰 생성
-    public String createJwt(String username, String role, Long expiredMs) {
+    public String createJwt(String category, String username, String role, Long expiredMs) {
         return Jwts.builder()
+                .claim("category", category)
                 .claim("username", username)
                 .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis())) //토큰 발행 시간

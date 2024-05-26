@@ -1,6 +1,6 @@
-package com.example.springjwt.repository;
+package com.example.springjwtDeep.repository;
 
-import com.example.springjwt.entity.UserEntity;
+import com.example.springjwtDeep.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<UserEntity, Integer> {
