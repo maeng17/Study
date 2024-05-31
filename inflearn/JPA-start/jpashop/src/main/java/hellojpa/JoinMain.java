@@ -1,9 +1,7 @@
 package hellojpa;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.Persistence;
+import jakarta.persistence.*;
+import org.hibernate.Hibernate;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -83,24 +81,93 @@ public class JoinMain {
 //            Movie findMovie = em.find(Movie.class, movie.getId()); //innerjoin으로 알아서 가지고 옴
 //            System.out.println("findMovie: " + findMovie);
 
-            //고급매핑(@MappedSuperclass)
-            Member member = new Member();
-            member.setName("user");
-            member.setCreateBy("kim");
-            member.setCreateDate(LocalDateTime.now());
+//            //고급매핑(@MappedSuperclass)
+//            Member member = new Member();
+//            member.setName("user");
+//            member.setCreateBy("kim");
+//            member.setCreateDate(LocalDateTime.now());
+//
+//            em.persist(member);
+//
+//            em.flush(); //영속성 컨텍스트 날리고
+//            em.clear(); //영속성 컨텍스트 깔끔하게
 
-            em.persist(member);
+            //프록시
+            Member member1 = new Member();
+            member1.setName("hello1");
+            em.persist(member1);
 
-            em.flush(); //영속성 컨텍스트 날리고
-            em.clear(); //영속성 컨텍스트 깔끔하게
+            Member member2 = new Member();
+            member2.setName("hello2");
+            em.persist(member2);
+
+            em.flush();
+            em.clear();
+
+////            Member findMember = em.find(Member.class, member.getId());
+//            Member findMember = em.getReference(Member.class, member.getId()); //값이 필요할 떄 쿼리 출력
+//            System.out.println("findMember = " + findMember.getClass()); //Hibernate가 가짜로 만든 클래스 -> Proxy class
+//            System.out.println("find member.id: " + findMember.getId());
+//            System.out.println("find member.name: " + findMember.getName());
+//            // 값요청 -> 영속성 콘텍스트에 초기화 요청 -> db 조회 -> 실제 entity 생성하여 값 가져옴
+//            System.out.println("find member.name: " + findMember.getName()); // 두번째 요청시 이미 생성 했으므로 값만 가져옴
+
+            Member m1 = em.find(Member.class, member1.getId());
+//            Member m2 = em.find(Member.class, member2.getId()); //true
+            Member m2 = em.getReference(Member.class, member2.getId()); //false
+            System.out.println("m2 = " + m2.getClass());
+
+//            System.out.println("m1 == m2 : " + (m1.getClass() == m2.getClass()));
+//
+//            logic(m1, m2);
+
+//            Member reference = em.getReference(Member.class, member1.getId());
+//            System.out.println("m1 = " + m1.getClass());
+//            System.out.println("reference = " + reference.getClass());
+//            System.out.println("m1 == reference : " + (m1 == reference)); // 영속성 컨텍스트에 이미 있으면 실제 entity 반환. PK가 똑같으면 항상 true 반환
+//
+//            Member findMember = em.find(Member.class, member2.getId());
+//            System.out.println("m2 = " + m2.getClass());
+//            System.out.println("findMember = " + findMember.getClass()); //proxy로 조회 -> 프록시가 한번 조회되면 em.find에서도 프록시 반환  (m2 == findMember)가 무조건 true가 나와야 하기 때문
+//
+//            System.out.println("m2 == findMember : " + (m2 == findMember));
+
+//            //영속성 컨텍스트 끌 경우
+//            //em.detach(m2); //영속성 컨텍스트 없어서 noSession 에러
+//            em.close();
+//            //em.clear(); // 영속성 컨텍스트 새로 만들어져서 noSession 에러
+//            System.out.println("m2 = " + m2.getName());
+
+            //프록시 확인
+            //초기화 여부 확인
+            m2.getName(); //프록시 초기화 시 true
+            System.out.println("isLoaded = " + emf.getPersistenceUnitUtil().isLoaded(m2)); //초기화 안되있으면 false
+
+            //클래스 확인
+            Member refMember = em.getReference(Member.class, member1.getId());
+            System.out.println("refMember = " + refMember.getClass());
+
+
+            // 프록시 강제 초기화
+            Hibernate.initialize(refMember);
+            refMember.getName(); //강제 초기화
+
+
 
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
+            e.printStackTrace();
         } finally {
             em.close();
         }
         emf.close();
+    }
+
+    private static void logic(Member m1, Member m2) { //프록시로 넘어오는지 실제로 넘어오는지 알 수 없음
+                                                        // -> == 비교 X,  대신 instance of 사용
+        System.out.println("m1 == m2 : " + (m1 instanceof Member));
+        System.out.println("m1 == m2 : " + (m2 instanceof Member));
     }
 }
 
