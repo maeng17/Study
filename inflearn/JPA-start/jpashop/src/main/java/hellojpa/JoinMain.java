@@ -5,6 +5,7 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Persistence;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class JoinMain {
@@ -54,18 +55,44 @@ public class JoinMain {
 //            }
 //            System.out.println("==============");
 
-            //다양한 연관관계 매핑
-            //멤버 저장
+//            //다양한 연관관계 매핑
+//            //멤버 저장
+//            Member member = new Member();
+//            member.setName("member1");
+//            em.persist(member);
+//
+//            Team team = new Team();
+//            team.setName("teamA");
+//            //
+//            team.getMembers().add(member);
+//
+//            em.persist(team);
+
+//            //고급 매핑(상속관계)
+//            Movie movie = new Movie();
+//            movie.setDirecctor("A");
+//            movie.setActor("B");
+//            movie.setName("바람과함꼐뭐뭐뫄");
+//            movie.setPrice(10000);
+//
+//            em.persist(movie);
+//
+//            em.flush(); //영속성 컨텍스트 날리고
+//            em.clear(); //영속성 컨텍스트 깔끔하게
+//
+//            Movie findMovie = em.find(Movie.class, movie.getId()); //innerjoin으로 알아서 가지고 옴
+//            System.out.println("findMovie: " + findMovie);
+
+            //고급매핑(@MappedSuperclass)
             Member member = new Member();
-            member.setName("member1");
+            member.setName("user");
+            member.setCreateBy("kim");
+            member.setCreateDate(LocalDateTime.now());
+
             em.persist(member);
 
-            Team team = new Team();
-            team.setName("teamA");
-            //
-            team.getMembers().add(member);
-
-            em.persist(team);
+            em.flush(); //영속성 컨텍스트 날리고
+            em.clear(); //영속성 컨텍스트 깔끔하게
 
             tx.commit();
         } catch (Exception e) {
