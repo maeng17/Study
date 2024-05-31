@@ -18,13 +18,16 @@ public class Team {
     private Long id;
     private String name;
 
-    @OneToMany(mappedBy = "team") // 어떤 변수랑 연결되어 있는지
+//    @OneToMany(mappedBy = "team") // 어떤 변수랑 연결되어 있는지, team에 의해 매핑되어짐. 읽기만 가능
+
+    @OneToMany
+    @JoinColumn(name = "TEAM_ID")
     private List<Member> members = new ArrayList<>();
 
-    public void addMember(Member member) {
-        member.setTeam(this);
-        members.add(member);
-    }
+//    public void addMember(Member member) {
+//        member.setTeam(this);
+//        members.add(member);
+//    }
 }
 
 /*
