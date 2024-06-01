@@ -7,7 +7,7 @@ import lombok.Setter;
 import java.util.Objects;
 
 @Embeddable
-@Getter //불변객체로 만들기 - 값 변경 불가
+@Getter //Getter만 사용해서 불변객체로 만들기 - 값 변경 불가
 public class Address {
 
     private String city;

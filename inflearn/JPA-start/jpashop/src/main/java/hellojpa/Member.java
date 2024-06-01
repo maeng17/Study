@@ -6,7 +6,9 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -77,10 +79,36 @@ public class Member extends BaseEntity {
                     column = @Column(name = "WORK_ZIPCODE"))
     })
     private Address workAddress;
+
+    //값타임 컬렉션
+    @ElementCollection
+    @CollectionTable(name="FAVORITE_FOOD", joinColumns =
+        @JoinColumn(name = "MEMBER_ID"))
+    @Column(name="FOOD_NAME")
+    private Set<String> favoriteFoods = new HashSet<>();
+
+//    @ElementCollection
+//    @CollectionTable(name="ADDRESS", joinColumns =
+//    @JoinColumn(name = "MEMBER_ID"))
+//    private List<Address> addressesHistory = new ArrayList<>();
+
+    //값타입 컬렉션 대안 - 값타입컬렉션 보다 활용 가능성 높음, 실무 사용 용이
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name="MEMBER_ID")
+    private List<AddressEntity> addressesHistory = new ArrayList<>();
+
 }
 
 /*
 @AttributeOverride: 속성 재정의
  - 한 엔티티에서 같은 값 타입을 사용할 수 있게 해줌
  - @AttributeOverrides, @AttributeOverride를 사용해서 컬러 명 속성을 재정의
+ */
+
+/*
+값 타입 컬렉션
+ - 값 타입을 하나 이상 저장할 때 사용
+ - @ElementCollection, @CollectionTable 사용
+ - 데이터베이스는 컬렉션을 같은 테이블에 저장할 수 없다.
+ - 컬렉션을 저장하기 위한 별도의 테이블이 필요함
  */

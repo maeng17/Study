@@ -5,6 +5,7 @@ import org.hibernate.Hibernate;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 public class JoinMain {
     public static void main(String[] args) {
@@ -212,26 +213,73 @@ public class JoinMain {
 //            member.setWorkPeriod(new Period());
 //            em.persist(member);
 
-            //값타입과 불변 객체
-            Address address = new Address("city", "street", "zip");
+//            //값타입과 불변 객체
+//            Address address = new Address("city", "street", "zip");
+//            Member member = new Member();
+//            member.setName("hello");
+//            member.setHomeAddress(address);
+//            em.persist(member);
+//
+//            Address copyAddress = new Address(address.getCity(), address.getStreet(), address.getZipcode());
+//
+//            Member member1 = new Member();
+//            member1.setName("hello");
+//            //member1.setHomeAddress(address); // member, member1 모두 바뀜 -> 임베디드 타입 값타입을 공유했기 때문
+//            member1.setHomeAddress(copyAddress); //  --> 값타입 복사해서 사용해야한다.
+//            em.persist(member1);
+//
+////            member.getHomeAddress().setCity("newCity");
+//
+//            //불변객체에서 값 변경
+//            Address newAddress = new Address("newCity", address.getStreet(), address.getZipcode());
+//            member.setHomeAddress(newAddress);
+
+            //값타임 컬렉션
             Member member = new Member();
-            member.setName("hello");
-            member.setHomeAddress(address);
-            em.persist(member);
+            member.setName("member1");
+            member.setHomeAddress(new Address("Homecity", "street", "10000"));
+            member.getFavoriteFoods().add("치킨");
+            member.getFavoriteFoods().add("족발");
+            member.getFavoriteFoods().add("피자");
 
-            Address copyAddress = new Address(address.getCity(), address.getStreet(), address.getZipcode());
+//            member.getAddressesHistory().add(new Address("old1", "street", "10000"));
+//            member.getAddressesHistory().add(new Address("old2", "street", "10000"));
+            //값타입 컬렉션 대안 사용
+            member.getAddressesHistory().add(new AddressEntity("old1", "street", "10000"));
+            member.getAddressesHistory().add(new AddressEntity("old2", "street", "10000"));
 
-            Member member1 = new Member();
-            member1.setName("hello");
-            //member1.setHomeAddress(address); // member, member1 모두 바뀜 -> 임베디드 타입 값타입을 공유했기 때문
-            member1.setHomeAddress(copyAddress); //  --> 값타입 복사해서 사용해야한다.
-            em.persist(member1);
+            em.persist(member); //값타입 컬렉션도 함께 persist -> 테이블 생성
 
-//            member.getHomeAddress().setCity("newCity");
+            em.flush();
+            em.clear();
 
-            //불변객체에서 값 변경
-            Address newAddress = new Address("newCity", address.getStreet(), address.getZipcode());
-            member.setHomeAddress(newAddress);
+            System.out.println("================START================");
+            Member findMember = em.find(Member.class, member.getId());
+
+//            //- 기본값으로 지연로딩전략 사용
+//            List<Address> addressHistory = findMember.getAddressesHistory();
+//            for(Address address : addressHistory) {
+//                System.out.println("sddress = " + address.getCity());
+//            }
+//
+//            Set<String> favoriteFoods = findMember.getFavoriteFoods();
+//            for(String favoriteFood : favoriteFoods) {
+//                System.out.println("favoriteFood = " + favoriteFood);
+//            }
+
+//            //homeCity -> newCity
+////            findMember.getHomeAddress().setCity("newCity"); //불변객체이므로 setCity 사용불가
+//            Address a = findMember.getHomeAddress();
+//            findMember.setHomeAddress(new Address("newCity", a.getStreet(), a.getZipcode())); //새로운 인스턴스로 교체
+//
+//            //치킨 -> 한식
+//            findMember.getFavoriteFoods().remove("치킨");
+//            findMember.getFavoriteFoods().add("한식");
+
+//            findMember.getAddressesHistory().remove(new Address("old1", "street", "10000"));
+//            //equals를 이용해서 제거 -> 값을 제대로 입력해야함 / getAddressesHistory관련 값을 모두 제거후 다시 생성한다.
+//            findMember.getAddressesHistory().add(new Address("newCity1", "street", "10000"));
+//            // ->값 타입 컬렉션에 변경 사항이 발생하면, 주인 엔티티와 연관된 모든 데이터를 삭제하고, 값 타입 컬렉션에 있는 현재 값을 모두 다시 저장한다.
 
             tx.commit();
         } catch (Exception e) {
