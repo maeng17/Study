@@ -5,8 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Embeddable
-@Getter
-@Setter
+@Getter //불변객체로 만들기 - 값 변경 불가
 public class Address {
 
     private String city;

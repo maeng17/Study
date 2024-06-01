@@ -205,12 +205,33 @@ public class JoinMain {
 //            //findParent.getChildList().remove(0); //child 쿼리 하나가 지워짐
 //            em.remove(findParent); //자식까지 전부 삭제, child,parent 모두 삭제
 
-            //임베디드
+//            //임베디드
+//            Member member = new Member();
+//            member.setName("hello");
+//            member.setHomeAddress(new Address("city", "street", "zip"));
+//            member.setWorkPeriod(new Period());
+//            em.persist(member);
+
+            //값타입과 불변 객체
+            Address address = new Address("city", "street", "zip");
             Member member = new Member();
             member.setName("hello");
-            member.setHomeAddress(new Address("city", "street", "zip"));
-            member.setWorkPeriod(new Period());
+            member.setHomeAddress(address);
             em.persist(member);
+
+            Address copyAddress = new Address(address.getCity(), address.getStreet(), address.getZipcode());
+
+            Member member1 = new Member();
+            member1.setName("hello");
+            //member1.setHomeAddress(address); // member, member1 모두 바뀜 -> 임베디드 타입 값타입을 공유했기 때문
+            member1.setHomeAddress(copyAddress); //  --> 값타입 복사해서 사용해야한다.
+            em.persist(member1);
+
+//            member.getHomeAddress().setCity("newCity");
+
+            //불변객체에서 값 변경
+            Address newAddress = new Address("newCity", address.getStreet(), address.getZipcode());
+            member.setHomeAddress(newAddress);
 
             tx.commit();
         } catch (Exception e) {
