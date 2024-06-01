@@ -4,6 +4,8 @@ import jakarta.persistence.Embeddable;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Objects;
+
 @Embeddable
 @Getter //불변객체로 만들기 - 값 변경 불가
 public class Address {
@@ -19,7 +21,20 @@ public class Address {
         this.zipcode = zipcode;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Address address = (Address) o;
+        return Objects.equals(city, address.city) &&
+                Objects.equals(street, address.street) &&
+                Objects.equals(zipcode, address.zipcode);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(city, street, zipcode);
+    }
 }
 
 
