@@ -57,8 +57,30 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member")
     private List<MemberProduct> memberProducts = new ArrayList<>();
 
+
+    //임베디드 타입
+    //기간
+    @Embedded
+    private Period workPeriod;
+
+    //주소
+    @Embedded
+    private Address homeAddress;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "city",
+            column = @Column(name = "WORK_CITY")),
+            @AttributeOverride(name = "street",
+                    column = @Column(name = "WORK_STREET")),
+            @AttributeOverride(name = "zipcode",
+                    column = @Column(name = "WORK_ZIPCODE"))
+    })
+    private Address workAddress;
 }
 
 /*
-즉시로딩이
+@AttributeOverride: 속성 재정의
+ - 한 엔티티에서 같은 값 타입을 사용할 수 있게 해줌
+ - @AttributeOverrides, @AttributeOverride를 사용해서 컬러 명 속성을 재정의
  */

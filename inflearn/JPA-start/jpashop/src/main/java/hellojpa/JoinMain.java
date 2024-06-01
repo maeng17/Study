@@ -185,25 +185,32 @@ public class JoinMain {
 //            List<Member> members = em.createQuery("select m from Member m", Member.class)
 //                    .getResultList(); //JPQL시 EAGER에서는 쿼리가 n+1 나감, LAZY에서는 프록시로 나가서 정상출력
 
-            //영속성 전이
-            Child child1 = new Child();
-            Child child2 = new Child();
+//            //영속성 전이
+//            Child child1 = new Child();
+//            Child child2 = new Child();
+//
+//            Parent parent = new Parent();
+//            parent.addChild(child1);
+//            parent.addChild(child2);
+//
+//            em.persist(parent);
+////            em.persist(child1); //cascade = CascadeType.ALL 자동으로 child persist
+////            em.persist(child2);
+//
+//            em.flush();
+//            em.clear();
+//
+//            //고아객체
+//            Parent findParent = em.find(Parent.class, parent.getId());
+//            //findParent.getChildList().remove(0); //child 쿼리 하나가 지워짐
+//            em.remove(findParent); //자식까지 전부 삭제, child,parent 모두 삭제
 
-            Parent parent = new Parent();
-            parent.addChild(child1);
-            parent.addChild(child2);
-
-            em.persist(parent);
-//            em.persist(child1); //cascade = CascadeType.ALL 자동으로 child persist
-//            em.persist(child2);
-
-            em.flush();
-            em.clear();
-
-            //고아객체
-            Parent findParent = em.find(Parent.class, parent.getId());
-            //findParent.getChildList().remove(0); //child 쿼리 하나가 지워짐
-            em.remove(findParent); //자식까지 전부 삭제, child,parent 모두 삭제
+            //임베디드
+            Member member = new Member();
+            member.setName("hello");
+            member.setHomeAddress(new Address("city", "street", "zip"));
+            member.setWorkPeriod(new Period());
+            em.persist(member);
 
             tx.commit();
         } catch (Exception e) {
