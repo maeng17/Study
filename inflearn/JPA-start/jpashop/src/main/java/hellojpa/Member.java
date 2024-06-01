@@ -37,11 +37,15 @@ public class Member extends BaseEntity {
 //        //member에서 team 을 세팅할 때  team에서도 같이 세팅해줌 --> 양방향 세팅
 //    }
 
-    @ManyToOne //다대일 단방향. 연관관계의 주인처럼
-    @JoinColumn(name = "TEAM_ID", insertable = false, updatable = false) //insert 업데이트 x -> 읽기 전용 매핑
+    @ManyToOne(fetch = FetchType.LAZY) //다대일 단방향. 연관관계의 주인처럼
+    //fetch = FetchType.LAZY : 멤버 클래스만 db에서 조회,
+    // LAZY: 지연로딩
+    // EAGER: 즉시로딩 -> 성능저하로 실무에서 사용안하는 것이 좋음(쿼리가 너무 많이 생성됨)
+//    @JoinColumn(name = "TEAM_ID", insertable = false, updatable = false) //insert 업데이트 x -> 읽기 전용 매핑
+    @JoinColumn
     private Team team;
 
-    @OneToOne //ManyToOne과 비슷
+    @OneToOne(fetch = FetchType.LAZY) //ManyToOne과 비슷
     @JoinColumn(name="LOCKER_ID")
     private Locker locker;
 
@@ -54,3 +58,7 @@ public class Member extends BaseEntity {
     private List<MemberProduct> memberProducts = new ArrayList<>();
 
 }
+
+/*
+즉시로딩이
+ */

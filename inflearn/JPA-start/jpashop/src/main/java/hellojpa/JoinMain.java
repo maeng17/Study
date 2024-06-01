@@ -92,17 +92,17 @@ public class JoinMain {
 //            em.flush(); //영속성 컨텍스트 날리고
 //            em.clear(); //영속성 컨텍스트 깔끔하게
 
-            //프록시
-            Member member1 = new Member();
-            member1.setName("hello1");
-            em.persist(member1);
-
-            Member member2 = new Member();
-            member2.setName("hello2");
-            em.persist(member2);
-
-            em.flush();
-            em.clear();
+//            //프록시
+//            Member member1 = new Member();
+//            member1.setName("hello1");
+//            em.persist(member1);
+//
+//            Member member2 = new Member();
+//            member2.setName("hello2");
+//            em.persist(member2);
+//
+//            em.flush();
+//            em.clear();
 
 ////            Member findMember = em.find(Member.class, member.getId());
 //            Member findMember = em.getReference(Member.class, member.getId()); //값이 필요할 떄 쿼리 출력
@@ -112,10 +112,10 @@ public class JoinMain {
 //            // 값요청 -> 영속성 콘텍스트에 초기화 요청 -> db 조회 -> 실제 entity 생성하여 값 가져옴
 //            System.out.println("find member.name: " + findMember.getName()); // 두번째 요청시 이미 생성 했으므로 값만 가져옴
 
-            Member m1 = em.find(Member.class, member1.getId());
-//            Member m2 = em.find(Member.class, member2.getId()); //true
-            Member m2 = em.getReference(Member.class, member2.getId()); //false
-            System.out.println("m2 = " + m2.getClass());
+//            Member m1 = em.find(Member.class, member1.getId());
+////            Member m2 = em.find(Member.class, member2.getId()); //true
+//            Member m2 = em.getReference(Member.class, member2.getId()); //false
+//            System.out.println("m2 = " + m2.getClass());
 
 //            System.out.println("m1 == m2 : " + (m1.getClass() == m2.getClass()));
 //
@@ -138,21 +138,72 @@ public class JoinMain {
 //            //em.clear(); // 영속성 컨텍스트 새로 만들어져서 noSession 에러
 //            System.out.println("m2 = " + m2.getName());
 
-            //프록시 확인
-            //초기화 여부 확인
-            m2.getName(); //프록시 초기화 시 true
-            System.out.println("isLoaded = " + emf.getPersistenceUnitUtil().isLoaded(m2)); //초기화 안되있으면 false
+//            //프록시 확인
+//            //초기화 여부 확인
+//            m2.getName(); //프록시 초기화 시 true
+//            System.out.println("isLoaded = " + emf.getPersistenceUnitUtil().isLoaded(m2)); //초기화 안되있으면 false
+//
+//            //클래스 확인
+//            Member refMember = em.getReference(Member.class, member1.getId());
+//            System.out.println("refMember = " + refMember.getClass());
+//
+//
+//            // 프록시 강제 초기화
+//            Hibernate.initialize(refMember);
+//            refMember.getName(); //강제 초기화
 
-            //클래스 확인
-            Member refMember = em.getReference(Member.class, member1.getId());
-            System.out.println("refMember = " + refMember.getClass());
+//            //지연 로딩
+//            Team team = new Team();
+//            team.setName("teamA");
+//            em.persist(team);
+//
+//            Team teamB = new Team();
+//            teamB.setName("teamB");
+//            em.persist(teamB);
+//
+//            Member member1 = new Member();
+//            member1.setName("member1");
+//            member1.setTeam(team);
+//            em.persist(member1);
+//
+//            Member member2 = new Member();
+//            member2.setName("member2");
+//            member2.setTeam(teamB);
+//            em.persist(member2);
+//
+//            em.flush();
+//            em.clear();
+//
+////            Member m = em.find(Member.class, member1.getId());
+////
+////            System.out.println("m = " + m.getTeam().getClass());
+////
+////            System.out.println("================================");
+////            System.out.println("teamName = " + m.getTeam().getName()); //RAZY: 초기화, EAGER: teamA출력
+////            System.out.println("=================================");
+//
+//            List<Member> members = em.createQuery("select m from Member m", Member.class)
+//                    .getResultList(); //JPQL시 EAGER에서는 쿼리가 n+1 나감, LAZY에서는 프록시로 나가서 정상출력
 
+            //영속성 전이
+            Child child1 = new Child();
+            Child child2 = new Child();
 
-            // 프록시 강제 초기화
-            Hibernate.initialize(refMember);
-            refMember.getName(); //강제 초기화
+            Parent parent = new Parent();
+            parent.addChild(child1);
+            parent.addChild(child2);
 
+            em.persist(parent);
+//            em.persist(child1); //cascade = CascadeType.ALL 자동으로 child persist
+//            em.persist(child2);
 
+            em.flush();
+            em.clear();
+
+            //고아객체
+            Parent findParent = em.find(Parent.class, parent.getId());
+            //findParent.getChildList().remove(0); //child 쿼리 하나가 지워짐
+            em.remove(findParent); //자식까지 전부 삭제, child,parent 모두 삭제
 
             tx.commit();
         } catch (Exception e) {
