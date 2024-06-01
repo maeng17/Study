@@ -12,12 +12,12 @@ public class Jpamain {
         EntityTransaction tx = em.getTransaction();
         tx.begin();
 
-        Member member = new Member();
-        member.setUsername("member1");
-        em.persist(member);
-
-        em.flush();
-        em.clear();
+//        Member member = new Member();
+//        member.setUsername("member1");
+//        em.persist(member);
+//
+//        em.flush();
+//        em.clear();
 
 //        TypedQuery<Member> query1 = em.createQuery("SELECT m FROM Member m", Member.class);
 //        TypedQuery<String> query2 = em.createQuery("SELECT m.username FROM Member m", String.class); //하나의 타입 이용시 TypeQuery 사용가능
@@ -76,12 +76,34 @@ public class Jpamain {
 //        System.out.println("result: " + result[1]);
 
         //new 명령어로 조회
-        List<MemberDTO> result = em.createQuery("select new jpql.MemberDTO(m.username, m.age) FROM Member m", MemberDTO.class)
+//        List<MemberDTO> result = em.createQuery("select new jpql.MemberDTO(m.username, m.age) FROM Member m", MemberDTO.class)
+//                .getResultList();
+//
+//        MemberDTO memberDTO = result.get(0);
+//        System.out.println("memberDTO: " + memberDTO.getUsername());
+//        System.out.println("memberDTO: " + memberDTO.getAge());
+
+        //페이징 API
+
+        for(int i=0; i<100; i++){
+            Member member = new Member();
+            member.setUsername("member" + i);
+            member.setAge(i);
+            em.persist(member);
+        }
+        em.flush();
+        em.clear();
+
+        List<Member> result = em.createQuery("select m from Member m order by m.age desc", Member.class)
+                .setFirstResult(0)
+                .setMaxResults(10)
                 .getResultList();
 
-        MemberDTO memberDTO = result.get(0);
-        System.out.println("memberDTO: " + memberDTO.getUsername());
-        System.out.println("memberDTO: " + memberDTO.getAge());
+        System.out.println("result.size = ");
+        for(Member member1 : result) {
+            System.out.println("member1 = " + member1);
+        }
+
         tx.commit();
         try {
         } catch (Exception e) {
