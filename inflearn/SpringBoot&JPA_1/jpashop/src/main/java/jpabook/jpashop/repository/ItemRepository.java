@@ -18,7 +18,8 @@ public class ItemRepository {
         if(item.getId() == null) {
             em.persist(item); //새상품 등록
         } else {
-            em.merge(item); // 강제 업데이트
+            //준영속 엔티티 수정 방법 - 1) 병합(merge) 사용
+            em.merge(item); // 수정 -> 강제 업데이트
         }
     }
 
