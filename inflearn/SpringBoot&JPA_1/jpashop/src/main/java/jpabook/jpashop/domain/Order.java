@@ -68,7 +68,7 @@ public class Order {
     // === 비즈니스 로직 === //
     //주문 취소 -> 변경 내역 감지해서 JSP에서 자동 업데이트 쿼리 날라감
     public void cancel() {
-        if(delivery.getStatus().equals(DeliveryStatus.COMP)){
+        if(delivery.getStatus() == DeliveryStatus.COMP){
             throw new IllegalStateException("이미 배송완료된 상품은 취소가 불가능합니다.");
         }
         this.setStatus(OrderStatus.CANCEL);
