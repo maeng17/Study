@@ -21,6 +21,7 @@ public class Order {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    //orderV1실행 시 LAZY에 의해  Member member = new ByteBuddyInterceptor();로 처리됨
     @JoinColumn(name = "member_id") //연관관계 주인
     private Member member;
 
