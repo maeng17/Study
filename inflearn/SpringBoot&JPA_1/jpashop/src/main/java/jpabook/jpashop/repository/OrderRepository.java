@@ -1,10 +1,10 @@
 package jpabook.jpashop.repository;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import jpabook.jpashop.domain.Order;
+import jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderRepository {
 
-    @PersistenceContext
+    //@PersistenceContext
     private final EntityManager em;
 
     public void save(Order order) {
@@ -103,7 +103,7 @@ public class OrderRepository {
         return query.getResultList();
     }
 
-    //RAZY 무시하고 실제 객체 값을 가져와서 채워넣음
+    //간단한 주문조회 v3: RAZY 무시하고 실제 객체 값을 가져와서 채워넣음
     public List<Order> findAllWithMemberDelivery() {
         return em.createQuery(
                 "select o from Order o" +
@@ -111,4 +111,22 @@ public class OrderRepository {
                         " join fetch o.delivery d", Order.class
         ).getResultList();
     }
+
+//    //간단한 주문조회 v4: OrderSimpleQueryDto에 매핑하기 위해 new Operation 사용
+//    // -> JPA에서 이동할 때 OrderSimpleQueryDto(o) 하면 o를 식별자로 넣어버려서 파라미터를 다 넣어줘야함
+//    public List<OrderSimpleQueryDto> findOrderDtos() {
+//        return em.createQuery(
+//                "select new jpabook.jpashop.repository.OrderSimpleQueryDto(o.id, m.name, o.orderDate, o.status, d.address)" +
+//                " from Order o" +
+//                " join o.member m" +
+//                " join o.delivery d", OrderSimpleQueryDto.class)
+//                .getResultList();
+//    }
 }
+
+/*
+
+JPA는 기본적으로 엔티티와 Value Object 반환
+DTO는 반환 안됨 -> new Operation 사용하면 반환 가능
+
+ */
