@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
@@ -52,10 +53,11 @@ public class OrderApiController {
         return result;
     }
 
-    //주문 조회 V3: 페치 조인 최적화(엔티티 -> DTO 변환)
+    //주문 조회 V3: 페치 조인 최적화(엔티티 -> DTO 변환) - 쿼리 한번 출려구
     //Hibernate 6이전: order_item의 수만큼 데이터가 늘어남
     //Hibernate 6: 페치 조인 사용 시 자동으로 중복 제거를 하도록 변경
     // -> 일대다 패치조인시 페이징 불가능
+    //h2 애플리케이션 상에서는 중복 처리 안되서 데이터 2배 입력
     @GetMapping("/api/v3/orders")
     public List<OrderDto> ordersV3() {
         List<Order> orders = orderRepository.findAllWithItem();
@@ -69,6 +71,29 @@ public class OrderApiController {
 
         return result;
     }
+
+    //주문 조회 V3.1: 페이징과 한계 돌파(엔티티를 DTO로 변환)
+    // 쿼리 3번 출력(최적화)
+    //h2 애플리케이션 상에서는 중복 없는 데이터 전송 -> 효율적
+    //ToOne 관계는 페치 조인해도 페이징에 영향을 주지 않는다. 따라서 ToOne 관계는 페치조인으로 쿼리 수 를 줄이고 해결하고,
+    // 나머지는 `hibernate.default_batch_fetch_size` 로 최적화
+    @GetMapping("/api/v3.1/orders")
+    public List<OrderDto> ordersV3_page(@RequestParam(value = "offset", defaultValue = "0") int offset,
+                                        @RequestParam(value = "limt", defaultValue = "100") int limit) {
+        List<Order> orders = orderRepository.findAllWithMemberDelivery(offset, limit);
+        for (Order order : orders) {
+            System.out.println("order ref = " + order);
+            System.out.println("order_id= " + order.getId());
+        }
+        List <OrderDto> result = orders.stream()
+                .map(o -> new OrderDto(o))
+                .collect(toList());
+
+        return result;
+    }
+
+
+
 
 
         @Getter

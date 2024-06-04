@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public class Order {
     @JoinColumn(name = "member_id") //연관관계 주인
     private Member member;
 
+//    @BatchSize(size = 1000) //개별 최적화: 디테일하게 적용(collection의 경우)
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL) //order 저장시 orderItems 값도 저장
     private List<OrderItem> orderItems = new ArrayList<>();
 

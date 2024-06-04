@@ -137,8 +137,17 @@ public class OrderRepository {
                 .getResultList();
     }
 
-
-
+    //주문 조회 V3.1
+    public List<Order> findAllWithMemberDelivery(int offset, int limit) {
+        return em.createQuery(
+                "select distinct o from Order o" + //hibernate 6이전: distinct추가- Order가 같은 값이면 중복 제거해줌
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d", Order.class)
+//                "select o from Order o", Order.class) //사용 가능하지만 쿼리 양 증가
+                .setFirstResult(offset)
+                .setMaxResults(limit)
+                .getResultList();
+    }
 }
 
 
