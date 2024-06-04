@@ -52,7 +52,26 @@ public class OrderApiController {
         return result;
     }
 
-    @Getter
+    //주문 조회 V3: 페치 조인 최적화(엔티티 -> DTO 변환)
+    //Hibernate 6이전: order_item의 수만큼 데이터가 늘어남
+    //Hibernate 6: 페치 조인 사용 시 자동으로 중복 제거를 하도록 변경
+    // -> 일대다 패치조인시 페이징 불가능
+    @GetMapping("/api/v3/orders")
+    public List<OrderDto> ordersV3() {
+        List<Order> orders = orderRepository.findAllWithItem();
+        for (Order order : orders) {
+            System.out.println("order ref = " + order);
+            System.out.println("order_id= " + order.getId());
+        }
+        List <OrderDto> result = orders.stream()
+                .map(o -> new OrderDto(o))
+                .collect(toList());
+
+        return result;
+    }
+
+
+        @Getter
     static class OrderDto {
         private Long orderId;
         private String name;
@@ -76,6 +95,7 @@ public class OrderApiController {
 
         }
     }
+
 
     @Getter
     static class OrderItemDto{

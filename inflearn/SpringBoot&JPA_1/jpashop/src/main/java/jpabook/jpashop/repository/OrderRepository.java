@@ -106,11 +106,13 @@ public class OrderRepository {
     //간단한 주문조회 v3: RAZY 무시하고 실제 객체 값을 가져와서 채워넣음
     public List<Order> findAllWithMemberDelivery() {
         return em.createQuery(
-                "select o from Order o" +
+                "select distinct o from Order o" + //hibernate 6이전: distinct추가- Order가 같은 값이면 중복 제거해줌
                         " join fetch o.member m" +
                         " join fetch o.delivery d", Order.class
         ).getResultList();
     }
+
+
 
 //    //간단한 주문조회 v4: OrderSimpleQueryDto에 매핑하기 위해 new Operation 사용
 //    // -> JPA에서 이동할 때 OrderSimpleQueryDto(o) 하면 o를 식별자로 넣어버려서 파라미터를 다 넣어줘야함
@@ -122,7 +124,25 @@ public class OrderRepository {
 //                " join o.delivery d", OrderSimpleQueryDto.class)
 //                .getResultList();
 //    }
+
+
+    //주문 조회 V3:
+    public List<Order> findAllWithItem() {
+        return em.createQuery(
+                "select o from Order o" +
+                " join fetch o.member m" +
+                " join fetch o.delivery d" +
+                " join fetch o.orderItems oi" +
+                " join fetch oi.item i", Order.class)
+                .getResultList();
+    }
+
+
+
 }
+
+
+
 
 /*
 
