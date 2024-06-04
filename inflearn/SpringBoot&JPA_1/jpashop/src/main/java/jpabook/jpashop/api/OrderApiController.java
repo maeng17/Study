@@ -6,6 +6,8 @@ import jpabook.jpashop.domain.OrderItem;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
+import jpabook.jpashop.repository.order.query.OrderFlatDto;
+import jpabook.jpashop.repository.order.query.OrderItemQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryRepository;
 import lombok.Getter;
@@ -19,7 +21,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -105,14 +107,37 @@ public class OrderApiController {
     //많은 코드를 직접 작성해야함. select의 양의 줄어듬
     @GetMapping("/api/v5/orders")
     public List<OrderQueryDto> ordersV5() {
-        return orderQueryRepository.findAllByDto_optimization();
+        return orderQueryRepository.findAllByDto_optimization(); 
+        
     }
 
 
+    //주문 조회 V6: 플랫 데이터 최적화(JPA에서 DTO로 직접 조회) - 쿼리 1번
+    // v5보다 느릴 수 있음. 애플리케이션 추가 작업 많음, 페이징 불가
+//    @GetMapping("/api/v6/orders")
+//    public List<OrderFlatDto> ordersV6() {
+//        return orderQueryRepository.findAllByDto_flat();//v5 와 스펙이 다름
+//    }
+
+    //flats -> orderQueryDto, orderItemQueryDto 변환 -> 맵으로 orderQueryDto 변환(getValue로 orderItemQueryDto까지 함께)
+    @GetMapping("/api/v6/orders")
+    public List<OrderQueryDto> ordersV6() {
+        List<OrderFlatDto> flats = orderQueryRepository.findAllByDto_flat();//v5 와 스펙이 다름
+
+        return flats.stream()
+                .collect(groupingBy(o -> new OrderQueryDto(o.getOrderId(),
+                                o.getName(), o.getOrderDate(), o.getOrderStatus(), o.getAddress()),
+                        mapping(o -> new OrderItemQueryDto(o.getOrderId(),
+                                o.getItemName(), o.getOrderPrice(), o.getCount()), toList())
+                )).entrySet().stream()
+                .map(e -> new OrderQueryDto(e.getKey().getOrderId(),
+                        e.getKey().getName(), e.getKey().getOrderDate(), e.getKey().getOrderStatus(),
+                        e.getKey().getAddress(), e.getValue()))
+                .collect(toList());
+    }
 
 
-
-        @Getter
+    @Getter
     static class OrderDto {
         private Long orderId;
         private String name;
