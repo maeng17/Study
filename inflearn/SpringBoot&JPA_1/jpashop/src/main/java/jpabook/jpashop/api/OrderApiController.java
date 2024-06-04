@@ -95,10 +95,17 @@ public class OrderApiController {
         return result;
     }
 
-    //주문 조회 V4: JPA에서 DTO 직접 조회, 쿼리 여러번 나감
+    //주문 조회 V4: JPA에서 DTO 직접 조회, 쿼리 여러번 나감 - Query: 루트 1번, 컬렉션 N 번 실행
     @GetMapping("/api/v4/orders")
     public List<OrderQueryDto> ordersV4() {
         return orderQueryRepository.findOrderQueryDtos();
+    }
+
+    //주문 조회 V5: 컬렉션 조회 최적화(JPA에서 DTO 직접 조회) - Query: 루트 1번, 컬렉션 1번
+    //많은 코드를 직접 작성해야함. select의 양의 줄어듬
+    @GetMapping("/api/v5/orders")
+    public List<OrderQueryDto> ordersV5() {
+        return orderQueryRepository.findAllByDto_optimization();
     }
 
 
